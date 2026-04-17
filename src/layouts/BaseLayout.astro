@@ -1,0 +1,63 @@
+---
+import type { Lang } from '../i18n/utils';
+import '../styles/global.css';
+
+export type ActivePage = 'home' | 'bookings';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  active: ActivePage;
+}
+
+const { title, description, lang, active: _active } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#131313" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot name="header" />
+    <main>
+      <slot />
+    </main>
+    <slot name="footer" />
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { root: null, rootMargin: '0px 0px -60px 0px', threshold: 0.1 }
+        );
+        document.querySelectorAll('.fade-in-up').forEach((el) => observer.observe(el));
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  main {
+    min-height: calc(100vh - var(--header-height));
+  }
+</style>
