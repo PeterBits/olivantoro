@@ -1,0 +1,57 @@
+---
+import type { Lang } from '../i18n/utils';
+import { useTranslations } from '../i18n/utils';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__tagline title-sm">{t.footer.tagline}</p>
+    <div class="footer__links">
+      <a href={t.footer.whatsappHref}  class="footer__link" target="_blank" rel="noopener noreferrer">{t.footer.whatsapp}</a>
+      <a href={t.footer.instagramHref} class="footer__link" target="_blank" rel="noopener noreferrer">{t.footer.instagram}</a>
+    </div>
+    <p class="footer__copy label-sm">{t.footer.copyright}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--surface-container-low);
+    padding: 3rem 2rem;
+  }
+  .footer__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .footer__tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--on-surface);
+    font-size: 1.125rem;
+  }
+  .footer__links { display: flex; gap: 1.25rem; }
+  .footer__link {
+    color: var(--on-surface-variant);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: color var(--transition);
+  }
+  .footer__link:hover { color: var(--primary); }
+  .footer__copy { color: var(--outline); }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+</style>
