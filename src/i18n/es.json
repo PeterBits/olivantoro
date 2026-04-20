@@ -60,6 +60,18 @@
       "errorTitle": "No se pudo cargar la disponibilidad.",
       "errorHint": "Escríbenos por WhatsApp y te confirmamos al instante.",
       "ctaButton": "Reservar por WhatsApp",
+      "selectionBar": {
+        "countSingular": "1 día seleccionado",
+        "countPlural": "%n días seleccionados",
+        "clear": "Limpiar selección"
+      },
+      "modal": {
+        "title": "Confirma tu reserva",
+        "datesLabel": "Días seleccionados",
+        "totalLabel": "Total estimado",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar"
+      },
       "months": [
         "Enero",
         "Febrero",

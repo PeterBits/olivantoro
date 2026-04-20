@@ -60,6 +60,18 @@
       "errorTitle": "Couldn't load availability.",
       "errorHint": "Message us on WhatsApp and we'll confirm instantly.",
       "ctaButton": "Book via WhatsApp",
+      "selectionBar": {
+        "countSingular": "1 day selected",
+        "countPlural": "%n days selected",
+        "clear": "Clear selection"
+      },
+      "modal": {
+        "title": "Confirm your booking",
+        "datesLabel": "Selected dates",
+        "totalLabel": "Estimated total",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
       "months": [
         "January",
         "February",
