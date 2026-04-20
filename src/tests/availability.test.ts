@@ -8,7 +8,7 @@ import {
   indexEvents,
   buildDays,
   buildFallbackResponse,
-} from './availability';
+} from '../pages/api/availability';
 
 describe('parsePriceFromText', () => {
   describe('when input is null or undefined', () => {
