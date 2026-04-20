@@ -378,5 +378,14 @@ const weekdaysJson = JSON.stringify(t.bookings.calendar.weekdays);
   @media (min-width: 768px) {
     .cal__head { flex-direction: row; justify-content: space-between; align-items: center; }
     .cal__grid { gap: 0.5rem; }
+    :global(.cal__num) {
+      font-size: 1.3rem;
+    }
+    :global(.cal__cell:has(.cal__price) .cal__num) {
+      font-size: 1.1rem;
+    }
+    :global(.cal__cell:has(.cal__price) .cal__price) {
+      font-size: 0.75rem;
+    }
   }
 </style>
