@@ -1,6 +1,7 @@
 ---
 import type { Lang } from '../i18n/utils';
 import { useTranslations } from '../i18n/utils';
+import '../styles/booking-calendar.css';
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -11,7 +12,17 @@ const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? DEFAULT_WHATSAP
 const whatsappHref = `https://wa.me/${whatsappNumber}`;
 
 const monthsJson = JSON.stringify(t.bookings.calendar.months);
-const weekdaysJson = JSON.stringify(t.bookings.calendar.weekdays);
+const { selectionBar, modal } = t.bookings.calendar;
+const i18nJson = JSON.stringify({
+  selectionCountSingular: selectionBar.countSingular,
+  selectionCountPlural: selectionBar.countPlural,
+  selectionClear: selectionBar.clear,
+  modalTitle: modal.title,
+  modalDatesLabel: modal.datesLabel,
+  modalTotalLabel: modal.totalLabel,
+  modalCancel: modal.cancel,
+  modalConfirm: modal.confirm,
+});
 ---
 
 <section class="cal section">
@@ -38,7 +49,8 @@ const weekdaysJson = JSON.stringify(t.bookings.calendar.weekdays);
       class="cal__frame"
       id="cal-frame"
       data-months={monthsJson}
-      data-weekdays={weekdaysJson}
+      data-whatsapp={whatsappHref}
+      data-i18n={i18nJson}
     >
       <div class="cal__nav">
         <span id="cal-label" class="title-lg"></span>
@@ -61,331 +73,34 @@ const weekdaysJson = JSON.stringify(t.bookings.calendar.weekdays);
       </div>
     </div>
 
+    <div id="cal-selection-bar" class="cal__selection-bar" hidden>
+      <span id="cal-selection-count" class="cal__selection-count"></span>
+      <button id="cal-selection-clear" class="btn btn--secondary cal__selection-clear-btn" type="button"></button>
+    </div>
 
     <div class="cal__cta">
-      <!-- <p class="cal__cta-text body-md">{t.bookings.calendar.ctaText}</p> -->
-      <a href={whatsappHref} class="btn btn--primary" target="_blank" rel="noopener noreferrer">
+      <button id="cal-whatsapp-btn" class="btn btn--primary" type="button">
         {t.bookings.calendar.ctaButton}
-      </a>
+      </button>
     </div>
   </div>
 </section>
 
+<dialog id="cal-modal" class="cal__modal">
+  <div class="cal__modal-content">
+    <h3 id="cal-modal-title" class="cal__modal-title"></h3>
+    <div class="cal__modal-body">
+      <p id="cal-modal-dates-label" class="cal__modal-dates-label"></p>
+      <ul id="cal-modal-dates-list" class="cal__modal-dates-list"></ul>
+      <p id="cal-modal-total" class="cal__modal-total" hidden></p>
+    </div>
+    <div class="cal__modal-actions">
+      <button id="cal-modal-cancel" class="btn btn--secondary" type="button"></button>
+      <button id="cal-modal-confirm" class="btn btn--primary" type="button"></button>
+    </div>
+  </div>
+</dialog>
+
 <script>
-  type DayStatus = 'reserved' | 'available' | 'unavailable';
-  interface DayInfo {
-    date: string;
-    status: DayStatus;
-    price?: number;
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const frame = document.getElementById('cal-frame');
-    if (!frame) return;
-    const MONTHS: string[] = JSON.parse(frame.dataset.months || '[]');
-
-    const grid = document.getElementById('cal-grid');
-    const label = document.getElementById('cal-label');
-    const loading = document.getElementById('cal-loading');
-    const errorEl = document.getElementById('cal-error');
-    const prev = document.getElementById('cal-prev');
-    const next = document.getElementById('cal-next');
-    if (!grid || !label || !loading || !errorEl || !prev || !next) return;
-
-    const now = new Date();
-    let year = now.getFullYear();
-    let month = now.getMonth(); // 0-based
-    let dayMap = new Map<string, DayInfo>();
-
-    prev.addEventListener('click', () => shift(-1));
-    next.addEventListener('click', () => shift(1));
-
-    function shift(delta: number) {
-      month += delta;
-      if (month > 11) { month = 0; year++; }
-      if (month < 0)  { month = 11; year--; }
-      render();
-    }
-
-    function pad(n: number) { return String(n).padStart(2, '0'); }
-
-    async function render() {
-      label!.textContent = `${MONTHS[month]} ${year}`;
-
-      // Preserve weekday headers (first 7 children)
-      const headers = Array.from(grid!.children).slice(0, 7);
-      grid!.innerHTML = '';
-      headers.forEach((h) => grid!.appendChild(h));
-
-      loading!.style.display = 'block';
-      errorEl!.hidden = true;
-      dayMap = new Map();
-
-      try {
-        const res = await fetch(`/api/availability?year=${year}&month=${month + 1}`);
-        if (!res.ok) throw new Error('fetch_failed');
-        const data = await res.json();
-        const days = (data.days as DayInfo[]) || [];
-        for (const d of days) dayMap.set(d.date, d);
-      } catch {
-        errorEl!.hidden = false;
-        loading!.style.display = 'none';
-        paint();
-        return;
-      }
-
-      loading!.style.display = 'none';
-      paint();
-    }
-
-    function paint() {
-      const first = new Date(year, month, 1);
-      const last = new Date(year, month + 1, 0);
-      const daysInMonth = last.getDate();
-
-      // Monday-first index (0 = Mon, 6 = Sun)
-      let startDow = first.getDay() - 1;
-      if (startDow < 0) startDow = 6;
-
-      const today = new Date();
-      const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-      // Leading muted cells from previous month
-      const prevLast = new Date(year, month, 0).getDate();
-      for (let i = startDow - 1; i >= 0; i--) {
-        const cell = document.createElement('div');
-        cell.className = 'cal__cell cal__cell--muted';
-        cell.textContent = String(prevLast - i);
-        grid!.appendChild(cell);
-      }
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const key = `${year}-${pad(month + 1)}-${pad(d)}`;
-        const info = dayMap.get(key);
-        const isToday = key === todayKey;
-        const isPast = new Date(year, month, d) < startOfToday;
-
-        const cell = document.createElement('div');
-        cell.className = 'cal__cell';
-
-        if (isPast) {
-          cell.classList.add('cal__cell--past');
-        } else if (info?.status === 'reserved') {
-          cell.classList.add('cal__cell--reserved');
-        } else if (info?.status === 'available') {
-          cell.classList.add('cal__cell--available');
-        } else {
-          cell.classList.add('cal__cell--unavailable');
-        }
-
-        const num = document.createElement('span');
-        num.className = 'cal__num';
-        num.textContent = String(d);
-        cell.appendChild(num);
-
-        if (!isPast && info?.status === 'available' && typeof info.price === 'number') {
-          const priceEl = document.createElement('span');
-          priceEl.className = 'cal__price';
-          priceEl.textContent = `${info.price}€`;
-          cell.appendChild(priceEl);
-        }
-
-        if (isToday) {
-          const dot = document.createElement('span');
-          dot.className = 'cal__today-dot';
-          cell.appendChild(dot);
-        }
-        grid!.appendChild(cell);
-      }
-
-      // Trailing muted cells
-      const totalCells = startDow + daysInMonth;
-      const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-      for (let i = 1; i <= remaining; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cal__cell cal__cell--muted';
-        cell.textContent = String(i);
-        grid!.appendChild(cell);
-      }
-    }
-
-    render();
-  });
+  import '../scripts/bookingCalendar';
 </script>
-
-<style>
-  .cal { background: var(--surface); }
-  .cal__inner { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
-
-  .cal__head {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .cal__legend {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
-  }
-  .cal__legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--on-surface-variant);
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-  .cal__swatch {
-    position: relative;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: var(--radius-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-sans);
-    font-weight: 600;
-  }
-  .cal__swatch-num {
-    font-size: 0.7rem;
-    line-height: 1;
-  }
-  .cal__swatch--available {
-    background: var(--surface-container-high);
-    border: 1px solid var(--outline-variant);
-    color: var(--on-surface);
-  }
-  .cal__swatch--reserved {
-    background: var(--primary);
-    color: var(--on-primary);
-  }
-  .cal__swatch--unavailable {
-    background: transparent;
-    color: var(--outline-variant);
-  }
-
-  .cal__frame {
-    background: var(--surface-container-high);
-    border-radius: var(--radius-xl);
-    padding: 2rem;
-    box-shadow: var(--elev-floating);
-  }
-
-  .cal__nav {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-  .cal__nav-btns { display: flex; gap: 0.5rem; }
-  .cal__nav-btn {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 999px;
-    color: var(--on-surface);
-    font-size: 1.25rem;
-    transition: background var(--transition), color var(--transition);
-  }
-  .cal__nav-btn:hover { background: var(--surface-container-highest); color: var(--primary); }
-
-  .cal__grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.25rem;
-  }
-  .cal__weekday {
-    text-align: center;
-    color: var(--outline);
-    padding: 0.5rem 0;
-  }
-
-  /* Cells, number and price are rendered dynamically from JS, so Astro's */
-  /* auto-scoping would miss them. We mark the relevant rules as :global. */
-  :global(.cal__cell) {
-    position: relative;
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-sans);
-    font-weight: 500;
-    color: var(--on-surface);
-    transition: background var(--transition), color var(--transition);
-  }
-  :global(.cal__cell--muted) { color: var(--outline-variant); }
-  :global(.cal__cell--past)  { color: var(--outline-variant); }
-  :global(.cal__cell--available) {
-    cursor: default;
-    background: var(--surface-container-high);
-    border: 1px solid var(--outline-variant);
-  }
-  :global(.cal__cell--available:hover) { background: var(--surface-container-highest); }
-  :global(.cal__cell--reserved) {
-    background: var(--primary);
-    color: var(--on-primary);
-    cursor: not-allowed;
-  }
-  :global(.cal__cell--unavailable) {
-    color: var(--outline-variant);
-    cursor: not-allowed;
-  }
-  :global(.cal__num) {
-    line-height: 1;
-    font-size: 0.95rem;
-  }
-  :global(.cal__price) {
-    font-size: 0.7rem;
-    font-weight: 600;
-    margin-top: 0.15rem;
-    color: var(--tertiary);
-    letter-spacing: 0.01em;
-  }
-  :global(.cal__cell:has(.cal__price) .cal__num) {
-    font-size: 0.75rem;
-  }
-  :global(.cal__cell:has(.cal__price) .cal__price) {
-    font-size: 0.58rem;
-    margin-top: 0.1rem;
-  }
-  :global(.cal__today-dot) {
-    position: absolute;
-    bottom: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px; height: 4px;
-    border-radius: 999px;
-    background: var(--tertiary);
-  }
-
-  .cal__status { color: var(--on-surface-variant); text-align: center; margin-top: 1.5rem; font-style: italic; }
-  .cal__error { text-align: center; margin-top: 1.5rem; color: var(--error); }
-  .cal__footnote { color: var(--outline); text-align: center; }
-
-  .cal__cta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .cal__cta-text { color: var(--on-surface-variant); }
-
-  @media (min-width: 768px) {
-    .cal__head { flex-direction: row; justify-content: space-between; align-items: center; }
-    .cal__grid { gap: 0.5rem; }
-    :global(.cal__num) {
-      font-size: 1.3rem;
-    }
-    :global(.cal__cell:has(.cal__price) .cal__num) {
-      font-size: 1.1rem;
-    }
-    :global(.cal__cell:has(.cal__price) .cal__price) {
-      font-size: 0.75rem;
-    }
-  }
-</style>
