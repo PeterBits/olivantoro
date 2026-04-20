@@ -60,6 +60,10 @@ const whatsappHref = `https://wa.me/${whatsappNumber}`;
   .footer__icon-img { width: 2.25rem; height: 2.25rem; transition: filter var(--transition); }
   .footer__copy { color: var(--outline); }
 
+  @media (max-width: 767px) {
+    .footer__links { justify-content: center; }
+  }
+
   @media (min-width: 768px) {
     .footer__inner {
       flex-direction: row;
