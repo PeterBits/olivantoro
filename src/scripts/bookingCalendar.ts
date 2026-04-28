@@ -17,7 +17,7 @@ interface CalI18n {
   modalConfirm: string;
 }
 
-const WA_MSG_PREFIX = 'Hola, me gustaría reservar la furgoneta para los siguientes días: ';
+const WA_MSG_PREFIX = 'Hola, me gustaría reservar la autocaravana para los siguientes días: ';
 
 const selectedDates = new Map<string, number | undefined>();
 
