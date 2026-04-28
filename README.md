@@ -1,6 +1,6 @@
-# Rodando Libre — Editorial Web
+# Olivantoro — Editorial Web
 
-Campervan rental website for **Rodando Libre** (Rolling Free in English), based in Toro, Zamora (Spain). The editorial / professional variant: serif display type, tight typographic hierarchy, a calm surface palette and a dedicated on-home gallery section.
+Campervan rental website for **Olivantoro**, based in Toro, Zamora (Spain). The editorial / professional variant: serif display type, tight typographic hierarchy, a calm surface palette and a dedicated on-home gallery section.
 
 Built with Astro 6 and deployed on Netlify.
 
