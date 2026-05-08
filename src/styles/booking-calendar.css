@@ -51,6 +51,20 @@
   background: transparent;
   color: var(--outline-variant);
 }
+.cal__swatch--unavailable::after {
+  content: '';
+  position: absolute;
+  inset: 15%;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.5px),
+    currentColor calc(50% - 0.5px),
+    currentColor calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+  opacity: 0.45;
+  pointer-events: none;
+}
 
 .cal__frame {
   background: var(--surface-container-high);
