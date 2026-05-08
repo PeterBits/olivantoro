@@ -198,6 +198,19 @@
 .cal__status { color: var(--on-surface-variant); text-align: center; margin-top: 1.5rem; font-style: italic; }
 .cal__error { text-align: center; margin-top: 1.5rem; color: var(--error); }
 
+/* Range-start cell (first click done, awaiting second) */
+.cal__cell--range-start {
+  cursor: pointer;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border: 2px dashed var(--primary);
+}
+.cal__cell--range-start:hover {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.cal__cell--range-start .cal__price { color: inherit; }
+
 /* Selection bar */
 .cal__selection-bar[hidden] { display: none; }
 .cal__selection-bar {
@@ -211,7 +224,7 @@
   border: 1px solid var(--outline-variant);
   flex-wrap: wrap;
 }
-.cal__selection-count {
+.cal__selection-text {
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 0.9rem;
@@ -220,6 +233,22 @@
 .cal__selection-clear-btn {
   padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
+}
+
+/* Range error message */
+.cal__range-error[hidden] { display: none; }
+.cal__range-error {
+  padding: 0.65rem 1rem;
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--error) 40%, transparent);
+}
+.cal__range-error-text {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--error);
+  margin: 0;
 }
 
 .cal__cta {

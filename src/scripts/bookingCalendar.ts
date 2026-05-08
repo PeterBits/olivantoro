@@ -1,4 +1,5 @@
 type DayStatus = 'reserved' | 'available' | 'unavailable';
+type SelectionState = 'idle' | 'selecting' | 'selected';
 
 interface DayInfo {
   date: string;
@@ -7,9 +8,10 @@ interface DayInfo {
 }
 
 interface CalI18n {
-  selectionCountSingular: string;
-  selectionCountPlural: string;
+  selectionRangeStart: string;
+  selectionRangeComplete: string;
   selectionClear: string;
+  selectionErrorBlocked: string;
   modalTitle: string;
   modalDatesLabel: string;
   modalTotalLabel: string;
@@ -20,6 +22,8 @@ interface CalI18n {
 const WA_MSG_PREFIX = 'Hola, me gustaría reservar la autocaravana para los siguientes días: ';
 
 const selectedDates = new Map<string, number | undefined>();
+let selectionState: SelectionState = 'idle';
+let rangeStart: string | null = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   const frame = document.getElementById('cal-frame');
@@ -39,8 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const todayBtn = document.getElementById('cal-today') as HTMLButtonElement | null;
   const selectionBar = document.getElementById('cal-selection-bar');
-  const selectionCount = document.getElementById('cal-selection-count');
+  const selectionText = document.getElementById('cal-selection-text');
   const selectionClear = document.getElementById('cal-selection-clear');
+  const rangeErrorEl = document.getElementById('cal-range-error');
+  const rangeErrorText = document.getElementById('cal-range-error-text');
   const whatsappBtn = document.getElementById('cal-whatsapp-btn');
   const modal = document.getElementById('cal-modal') as HTMLDialogElement | null;
   const modalTitle = document.getElementById('cal-modal-title');
@@ -61,11 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let month = now.getMonth();
   let dayMap = new Map<string, DayInfo>();
 
+  let rangeErrorTimer: ReturnType<typeof setTimeout> | null = null;
+
   prev.addEventListener('click', () => shift(-1));
   next.addEventListener('click', () => shift(1));
   todayBtn?.addEventListener('click', () => {
     year = now.getFullYear();
     month = now.getMonth();
+    if (selectionState === 'selecting') {
+      rangeStart = null;
+      selectionState = 'idle';
+      updateSelectionBar();
+    }
     render();
   });
   selectionClear?.addEventListener('click', clearSelection);
@@ -77,6 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSelectionBar();
 
   function shift(delta: number) {
+    if (selectionState === 'selecting') {
+      rangeStart = null;
+      selectionState = 'idle';
+      updateSelectionBar();
+    }
     month += delta;
     if (month > 11) { month = 0; year++; }
     if (month < 0)  { month = 11; year--; }
@@ -97,34 +115,121 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateSelectionBar() {
-    if (!selectionBar || !selectionCount) return;
-    const count = selectedDates.size;
-    if (count === 0) {
+    if (!selectionBar || !selectionText) return;
+
+    if (selectionState === 'idle') {
       selectionBar.hidden = true;
       return;
     }
+
     selectionBar.hidden = false;
-    selectionCount.textContent = count === 1
-      ? i18n.selectionCountSingular
-      : i18n.selectionCountPlural.replace('%n', String(count));
+
+    if (selectionState === 'selecting' && rangeStart) {
+      selectionText.textContent = i18n.selectionRangeStart.replace('%start', toDisplayDate(rangeStart));
+      return;
+    }
+
+    if (selectionState === 'selected' && selectedDates.size > 0) {
+      const sortedKeys = Array.from(selectedDates.keys()).sort();
+      const start = sortedKeys[0];
+      const end = sortedKeys[sortedKeys.length - 1];
+      const count = sortedKeys.length;
+      selectionText.textContent = i18n.selectionRangeComplete
+        .replace('%start', toDisplayDate(start))
+        .replace('%end', toDisplayDate(end))
+        .replace('%n', String(count));
+    }
+  }
+
+  function showRangeError(msg: string) {
+    if (!rangeErrorEl || !rangeErrorText) return;
+    if (rangeErrorTimer) clearTimeout(rangeErrorTimer);
+    rangeErrorText.textContent = msg;
+    rangeErrorEl.hidden = false;
+    rangeErrorTimer = setTimeout(() => {
+      if (rangeErrorEl) rangeErrorEl.hidden = true;
+    }, 3000);
   }
 
   function clearSelection() {
     selectedDates.clear();
+    rangeStart = null;
+    selectionState = 'idle';
     updateSelectionBar();
     resetGrid();
     paint();
   }
 
-  function toggleDate(key: string, price?: number) {
-    if (selectedDates.has(key)) {
-      selectedDates.delete(key);
-    } else {
+  function fillRange(a: string, b: string): boolean {
+    const [start, end] = [a, b].sort();
+    const startDate = new Date(start + 'T00:00:00');
+    const endDate = new Date(end + 'T00:00:00');
+
+    const range: Array<{ key: string; price?: number }> = [];
+    const cur = new Date(startDate);
+
+    while (cur <= endDate) {
+      const key = `${cur.getFullYear()}-${pad(cur.getMonth() + 1)}-${pad(cur.getDate())}`;
+      const info = dayMap.get(key);
+
+      if (!info || info.status !== 'available') {
+        return false;
+      }
+
+      range.push({ key, price: info.price });
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    selectedDates.clear();
+    for (const { key, price } of range) {
       selectedDates.set(key, price);
     }
-    updateSelectionBar();
-    resetGrid();
-    paint();
+    return true;
+  }
+
+  function handleDayClick(key: string, price?: number) {
+    if (selectionState === 'idle') {
+      rangeStart = key;
+      selectionState = 'selecting';
+      updateSelectionBar();
+      resetGrid();
+      paint();
+      return;
+    }
+
+    if (selectionState === 'selecting') {
+      if (key === rangeStart) {
+        rangeStart = null;
+        selectionState = 'idle';
+        updateSelectionBar();
+        resetGrid();
+        paint();
+        return;
+      }
+
+      const valid = fillRange(rangeStart!, key);
+      if (valid) {
+        selectionState = 'selected';
+        rangeStart = null;
+      } else {
+        selectionState = 'idle';
+        rangeStart = null;
+        showRangeError(i18n.selectionErrorBlocked);
+      }
+      updateSelectionBar();
+      resetGrid();
+      paint();
+      return;
+    }
+
+    if (selectionState === 'selected') {
+      selectedDates.clear();
+      rangeStart = key;
+      selectionState = 'selecting';
+      updateSelectionBar();
+      resetGrid();
+      paint();
+    }
   }
 
   function handleWhatsappClick() {
@@ -225,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isToday = key === todayKey;
       const isPast = new Date(year, month, d) < startOfToday;
       const isSelected = selectedDates.has(key);
+      const isRangeStart = key === rangeStart;
 
       const cell = document.createElement('div');
       cell.className = 'cal__cell';
@@ -237,19 +343,22 @@ document.addEventListener('DOMContentLoaded', () => {
           void cell.offsetWidth;
           cell.classList.add('cal__cell--shake');
         });
+      } else if (isRangeStart) {
+        cell.classList.add('cal__cell--range-start');
+        cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else if (isSelected) {
         cell.classList.add('cal__cell--selected');
-        cell.addEventListener('click', () => toggleDate(key, info?.price));
+        cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else if (info?.status === 'reserved') {
         cell.classList.add('cal__cell--reserved');
       } else if (info?.status === 'available') {
         cell.classList.add('cal__cell--available');
-        cell.addEventListener('click', () => toggleDate(key, info?.price));
+        cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else {
         cell.classList.add('cal__cell--unavailable');
         cell.addEventListener('click', () => {
           cell.classList.remove('cal__cell--shake');
-          void cell.offsetWidth; // reflow para reiniciar la animación si se repite
+          void cell.offsetWidth;
           cell.classList.add('cal__cell--shake');
         });
       }

@@ -11,9 +11,10 @@ const monthsJson = JSON.stringify([
 ]);
 
 const i18nJson = JSON.stringify({
-  selectionCountSingular: '1 día seleccionado',
-  selectionCountPlural: '%n días seleccionados',
+  selectionRangeStart: 'Desde el %start — elige el último día',
+  selectionRangeComplete: 'Del %start al %end · %n días',
   selectionClear: 'Limpiar selección',
+  selectionErrorBlocked: 'Hay días no disponibles en ese rango',
   modalTitle: 'Confirma tu reserva',
   modalDatesLabel: 'Días seleccionados',
   modalTotalLabel: 'Total estimado',
@@ -74,8 +75,11 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     </div>
 
     <div id="cal-selection-bar" class="cal__selection-bar" hidden>
-      <span id="cal-selection-count" class="cal__selection-count"></span>
+      <span id="cal-selection-text" class="cal__selection-text"></span>
       <button id="cal-selection-clear" class="btn btn--secondary cal__selection-clear-btn" type="button"></button>
+    </div>
+    <div id="cal-range-error" class="cal__range-error" hidden>
+      <p id="cal-range-error-text" class="cal__range-error-text"></p>
     </div>
 
     <div class="cal__cta">
