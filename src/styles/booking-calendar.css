@@ -1,4 +1,4 @@
-.cal { background: var(--surface); }
+.cal { background: var(--surface-container-lowest); }
 .cal__inner { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
 
 .cal__head {

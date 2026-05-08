@@ -91,33 +91,5 @@
       "es": "Km ilimitados",
       "en": "Unlimited km"
     }
-  },
-  "pricing": {
-    "available": false,
-    "availabilityLabel": {
-      "es": "A consultar",
-      "en": "On request"
-    },
-    "subtitle": {
-      "es": "Km ilimitados · Fianza a concretar con el seguro · Mínimo de noches a consultar.",
-      "en": "Unlimited km · Deposit TBC with insurance · Minimum nights on request."
-    },
-    "seasons": [
-      {
-        "key": "low",
-        "season": { "es": "Temporada baja", "en": "Low season" },
-        "months": { "es": "Fechas por confirmar", "en": "Dates TBC" }
-      },
-      {
-        "key": "mid",
-        "season": { "es": "Temporada media", "en": "Mid season" },
-        "months": { "es": "Fechas por confirmar", "en": "Dates TBC" }
-      },
-      {
-        "key": "high",
-        "season": { "es": "Temporada alta", "en": "High season" },
-        "months": { "es": "Fechas por confirmar", "en": "Dates TBC" }
-      }
-    ]
   }
 }

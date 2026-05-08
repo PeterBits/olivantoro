@@ -6,6 +6,7 @@ import Hero from '../components/Hero.astro';
 import VanInfo from '../components/VanInfo.astro';
 import Gallery from '../components/Gallery.astro';
 import HowItWorks from '../components/HowItWorks.astro';
+import BookingCalendar from '../components/BookingCalendar.astro';
 
 const SITE = 'https://olivantoro.es';
 
@@ -24,14 +25,14 @@ const schema = {
 <BaseLayout
   title="Olivantoro | Alquiler de autocaravana en Zamora."
   description="Alquila nuestra autocaravana en Zamora. Ford Rimor Kilig totalmente equipada: cama doble, capuchina y cocina. Reserva online."
-  active="home"
   canonicalUrl={`${SITE}/`}
   schema={schema}
 >
-  <Header slot="header" active="home" />
+  <Header slot="header" />
   <Hero />
   <VanInfo />
   <Gallery />
   <HowItWorks />
+  <BookingCalendar />
   <Footer slot="footer" />
 </BaseLayout>
