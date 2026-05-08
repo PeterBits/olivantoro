@@ -195,7 +195,21 @@
   background: var(--tertiary);
 }
 
-.cal__status { color: var(--on-surface-variant); text-align: center; margin-top: 1.5rem; font-style: italic; }
+.cal__grid-area { position: relative; }
+
+.cal__status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-style: italic;
+  background: var(--surface-container-high);
+  border-radius: var(--radius-sm);
+  z-index: 1;
+}
 .cal__error { text-align: center; margin-top: 1.5rem; color: var(--error); }
 
 /* Range-start cell (first click done, awaiting second) */

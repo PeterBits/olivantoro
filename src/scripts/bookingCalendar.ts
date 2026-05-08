@@ -282,7 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
     if (todayBtn) todayBtn.hidden = isCurrentMonth;
     resetGrid();
-    loading!.style.display = 'block';
+    for (let i = 0; i < 35; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cal__cell';
+      grid!.appendChild(cell);
+    }
+    loading!.style.display = 'flex';
     errorEl!.hidden = true;
     dayMap = new Map();
 
@@ -295,11 +300,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch {
       errorEl!.hidden = false;
       loading!.style.display = 'none';
+      resetGrid();
       paint();
       return;
     }
 
     loading!.style.display = 'none';
+    resetGrid();
     paint();
   }
 
@@ -381,8 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const totalCells = startDow + daysInMonth;
-    const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-    for (let i = 0; i < remaining; i++) {
+    const rounded = Math.ceil(Math.max(totalCells, 35) / 7) * 7;
+    const trailing = rounded - totalCells;
+    for (let i = 0; i < trailing; i++) {
       const cell = document.createElement('div');
       cell.className = 'cal__cell cal__cell--empty';
       grid!.appendChild(cell);

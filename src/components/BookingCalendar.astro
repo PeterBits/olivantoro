@@ -61,13 +61,15 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
         </div>
       </div>
 
-      <div id="cal-grid" class="cal__grid">
-        {weekdays.map((d) => (
-          <div class="cal__weekday label-sm">{d}</div>
-        ))}
+      <div class="cal__grid-area">
+        <div id="cal-grid" class="cal__grid">
+          {weekdays.map((d) => (
+            <div class="cal__weekday label-sm">{d}</div>
+          ))}
+        </div>
+        <p id="cal-loading" class="cal__status">Cargando disponibilidad…</p>
       </div>
 
-      <p id="cal-loading" class="cal__status">Cargando disponibilidad…</p>
       <div id="cal-error" class="cal__error" hidden>
         <p>No se pudo cargar la disponibilidad.</p>
         <p class="label-sm">Escríbenos por WhatsApp y te confirmamos al instante.</p>
