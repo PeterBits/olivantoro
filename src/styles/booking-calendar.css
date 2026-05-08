@@ -79,7 +79,7 @@
   justify-content: space-between;
   margin-bottom: 1.5rem;
 }
-.cal__nav-btns { display: flex; align-items: center; gap: 0.5rem; }
+.cal__nav-btns { display: flex; align-items: baseline; height: 100%; gap: 0.5rem; }
 .cal__today-btn {
   font-family: var(--font-sans);
   font-size: 0.75rem;
@@ -100,6 +100,10 @@
   border-radius: 999px;
   color: var(--on-surface);
   font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background var(--transition), color var(--transition);
 }
 .cal__nav-btn:hover { background: var(--surface-container-highest); color: var(--primary); }
