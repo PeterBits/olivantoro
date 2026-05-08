@@ -1,46 +1,11 @@
 ---
-import type { ActivePage } from '../layouts/BaseLayout.astro';
-
-interface Props {
-  active: ActivePage;
-}
-
-const { active } = Astro.props;
 ---
 
 <header class="header" id="site-header">
   <div class="header__inner">
     <a href="/" class="header__brand">Olivantoro</a>
-
-    <nav class="header__nav">
-      <a href="/"         class={`header__link ${active === 'home' ? 'header__link--active' : ''}`}>Inicio</a>
-      <a href="/reservas" class={`header__link ${active === 'bookings' ? 'header__link--active' : ''}`}>Reservas</a>
-    </nav>
-
-    <button class="header__hamburger" id="hamburger-btn" type="button" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
   </div>
-
-  <nav class="header__mobile" id="mobile-nav">
-    <a href="/"         class="header__mobile-link">Inicio</a>
-    <a href="/reservas" class="header__mobile-link">Reservas</a>
-  </nav>
 </header>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const hamburger = document.getElementById('hamburger-btn');
-    const mobileNav = document.getElementById('mobile-nav');
-    if (!hamburger || !mobileNav) return;
-
-    hamburger.addEventListener('click', () => {
-      const open = mobileNav.classList.toggle('header__mobile--open');
-      hamburger.setAttribute('aria-expanded', String(open));
-      hamburger.classList.toggle('header__hamburger--open', open);
-    });
-  });
-</script>
 
 <style>
   .header {
@@ -60,83 +25,13 @@ const { active } = Astro.props;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
   }
 
   .header__brand {
     font-family: var(--font-serif);
     font-size: 1.1rem;
     font-weight: 700;
-
     color: var(--on-surface);
     letter-spacing: -0.01em;
-  }
-
-  .header__nav {
-    display: none;
-    gap: 2rem;
-  }
-
-  .header__link {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--on-surface-variant);
-    letter-spacing: 0.02em;
-    transition: color var(--transition);
-  }
-  .header__link:hover,
-  .header__link--active { color: var(--primary); }
-
-  .header__hamburger {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    width: 2.5rem;
-    height: 2.5rem;
-    align-items: center;
-  }
-  .header__hamburger span {
-    display: block;
-    width: 22px;
-    height: 1.5px;
-    background: var(--on-surface);
-    transition: transform var(--transition), opacity var(--transition);
-  }
-  .header__hamburger--open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
-  .header__hamburger--open span:nth-child(2) { opacity: 0; }
-  .header__hamburger--open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
-
-  .header__mobile {
-    position: absolute;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    background: var(--surface-container);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0 2rem;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height var(--transition), padding var(--transition);
-  }
-  .header__mobile--open { max-height: 400px; padding: 1rem 2rem 1.5rem; }
-
-  .header__mobile-link {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--on-surface);
-    padding: 0.75rem 0;
-  }
-
-  @media (min-width: 768px) {
-    .header__nav { display: flex; }
-    .header__hamburger, .header__mobile { display: none; }
   }
 </style>

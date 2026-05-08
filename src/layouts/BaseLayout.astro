@@ -1,12 +1,9 @@
 ---
 import '../styles/global.css';
 
-export type ActivePage = 'home' | 'bookings';
-
 interface Props {
   title: string;
   description: string;
-  active: ActivePage;
   canonicalUrl: string;
   ogImage?: string;
   schema?: Record<string, unknown>;
@@ -15,7 +12,6 @@ interface Props {
 const {
   title,
   description,
-  active: _active,
   canonicalUrl,
   ogImage = '/og-image.jpg',
   schema,
