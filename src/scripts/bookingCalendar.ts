@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   let year = now.getFullYear();
   let month = now.getMonth();
-  let dayMap = new Map<string, DayInfo>();
+  const dayMap = new Map<string, DayInfo>();
+  const fetchedMonths = new Set<string>();
 
   let rangeErrorTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -74,11 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
   todayBtn?.addEventListener('click', () => {
     year = now.getFullYear();
     month = now.getMonth();
-    if (selectionState === 'selecting') {
-      rangeStart = null;
-      selectionState = 'idle';
-      updateSelectionBar();
-    }
     render();
   });
   selectionClear?.addEventListener('click', clearSelection);
@@ -90,11 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSelectionBar();
 
   function shift(delta: number) {
-    if (selectionState === 'selecting') {
-      rangeStart = null;
-      selectionState = 'idle';
-      updateSelectionBar();
-    }
     month += delta;
     if (month > 11) { month = 0; year++; }
     if (month < 0)  { month = 11; year--; }
@@ -290,20 +281,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loading!.style.display = 'flex';
     errorEl!.hidden = true;
-    dayMap = new Map();
 
-    try {
-      const res = await fetch(`/api/availability?year=${year}&month=${month + 1}`);
-      if (!res.ok) throw new Error('fetch_failed');
-      const data = await res.json();
-      const days = (data.days as DayInfo[]) ?? [];
-      for (const d of days) dayMap.set(d.date, d);
-    } catch {
-      errorEl!.hidden = false;
-      loading!.style.display = 'none';
-      resetGrid();
-      paint();
-      return;
+    const monthKey = `${year}-${pad(month + 1)}`;
+    if (!fetchedMonths.has(monthKey)) {
+      try {
+        const res = await fetch(`/api/availability?year=${year}&month=${month + 1}`);
+        if (!res.ok) throw new Error('fetch_failed');
+        const data = await res.json();
+        const days = (data.days as DayInfo[]) ?? [];
+        for (const d of days) dayMap.set(d.date, d);
+        fetchedMonths.add(monthKey);
+      } catch {
+        errorEl!.hidden = false;
+        loading!.style.display = 'none';
+        resetGrid();
+        paint();
+        return;
+      }
     }
 
     loading!.style.display = 'none';
