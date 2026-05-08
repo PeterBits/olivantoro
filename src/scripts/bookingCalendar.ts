@@ -226,6 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isPast) {
         cell.classList.add('cal__cell--past');
+        cell.addEventListener('click', () => {
+          cell.classList.remove('cal__cell--shake');
+          void cell.offsetWidth;
+          cell.classList.add('cal__cell--shake');
+        });
       } else if (isSelected) {
         cell.classList.add('cal__cell--selected');
         cell.addEventListener('click', () => toggleDate(key, info?.price));
@@ -236,6 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cell.addEventListener('click', () => toggleDate(key, info?.price));
       } else {
         cell.classList.add('cal__cell--unavailable');
+        cell.addEventListener('click', () => {
+          cell.classList.remove('cal__cell--shake');
+          void cell.offsetWidth; // reflow para reiniciar la animación si se repite
+          cell.classList.add('cal__cell--shake');
+        });
       }
 
       const num = document.createElement('span');
