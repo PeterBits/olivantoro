@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const next = document.getElementById('cal-next');
   if (!grid || !label || !loading || !errorEl || !prev || !next) return;
 
+  const todayBtn = document.getElementById('cal-today') as HTMLButtonElement | null;
   const selectionBar = document.getElementById('cal-selection-bar');
   const selectionCount = document.getElementById('cal-selection-count');
   const selectionClear = document.getElementById('cal-selection-clear');
@@ -62,6 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   prev.addEventListener('click', () => shift(-1));
   next.addEventListener('click', () => shift(1));
+  todayBtn?.addEventListener('click', () => {
+    year = now.getFullYear();
+    month = now.getMonth();
+    render();
+  });
   selectionClear?.addEventListener('click', clearSelection);
   whatsappBtn?.addEventListener('click', handleWhatsappClick);
   modalCancel?.addEventListener('click', () => modal?.close());
@@ -171,6 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function render() {
     label!.textContent = `${MONTHS[month]} ${year}`;
+    const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+    if (todayBtn) todayBtn.hidden = isCurrentMonth;
     resetGrid();
     loading!.style.display = 'block';
     errorEl!.hidden = true;
