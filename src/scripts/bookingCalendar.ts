@@ -205,11 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-    const prevLast = new Date(year, month, 0).getDate();
-    for (let i = startDow - 1; i >= 0; i--) {
+    for (let i = 0; i < startDow; i++) {
       const cell = document.createElement('div');
-      cell.className = 'cal__cell cal__cell--muted';
-      cell.textContent = String(prevLast - i);
+      cell.className = 'cal__cell cal__cell--empty';
       grid!.appendChild(cell);
     }
 
@@ -270,10 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const totalCells = startDow + daysInMonth;
     const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-    for (let i = 1; i <= remaining; i++) {
+    for (let i = 0; i < remaining; i++) {
       const cell = document.createElement('div');
-      cell.className = 'cal__cell cal__cell--muted';
-      cell.textContent = String(i);
+      cell.className = 'cal__cell cal__cell--empty';
       grid!.appendChild(cell);
     }
   }
