@@ -16,7 +16,7 @@ const i18nJson = JSON.stringify({
   selectionClear: 'Limpiar selección',
   selectionErrorBlocked: 'Hay días no disponibles en ese rango',
   modalTitle: 'Confirma tu reserva',
-  modalDatesLabel: 'Días seleccionados',
+  modalDaysLabel: '%n días',
   modalTotalLabel: 'Total estimado',
   modalCancel: 'Cancelar',
   modalConfirm: 'Confirmar',
@@ -94,9 +94,15 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   <div class="cal__modal-content">
     <h3 id="cal-modal-title" class="cal__modal-title"></h3>
     <div class="cal__modal-body">
-      <p id="cal-modal-dates-label" class="cal__modal-dates-label"></p>
-      <ul id="cal-modal-dates-list" class="cal__modal-dates-list"></ul>
-      <p id="cal-modal-total" class="cal__modal-total" hidden></p>
+      <div class="cal__modal-summary">
+        <div class="cal__modal-range">
+          <span id="cal-modal-range-start" class="cal__modal-range-date"></span>
+          <span class="cal__modal-range-sep">→</span>
+          <span id="cal-modal-range-end" class="cal__modal-range-date"></span>
+        </div>
+        <p id="cal-modal-days" class="cal__modal-days"></p>
+        <p id="cal-modal-total" class="cal__modal-total" hidden></p>
+      </div>
     </div>
     <div class="cal__modal-actions">
       <button id="cal-modal-cancel" class="btn btn--secondary" type="button"></button>

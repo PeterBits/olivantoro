@@ -13,7 +13,7 @@ interface CalI18n {
   selectionClear: string;
   selectionErrorBlocked: string;
   modalTitle: string;
-  modalDatesLabel: string;
+  modalDaysLabel: string;
   modalTotalLabel: string;
   modalCancel: string;
   modalConfirm: string;
@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const whatsappBtn = document.getElementById('cal-whatsapp-btn');
   const modal = document.getElementById('cal-modal') as HTMLDialogElement | null;
   const modalTitle = document.getElementById('cal-modal-title');
-  const modalDatesLabel = document.getElementById('cal-modal-dates-label');
-  const modalDatesList = document.getElementById('cal-modal-dates-list');
+  const modalRangeStart = document.getElementById('cal-modal-range-start');
+  const modalRangeEnd = document.getElementById('cal-modal-range-end');
+  const modalDays = document.getElementById('cal-modal-days');
   const modalTotal = document.getElementById('cal-modal-total');
   const modalCancel = document.getElementById('cal-modal-cancel');
   const modalConfirm = document.getElementById('cal-modal-confirm');
 
   if (modalTitle) modalTitle.textContent = i18n.modalTitle;
-  if (modalDatesLabel) modalDatesLabel.textContent = i18n.modalDatesLabel + ':';
   if (selectionClear) selectionClear.textContent = i18n.selectionClear;
   if (modalCancel) modalCancel.textContent = i18n.modalCancel;
   if (modalConfirm) modalConfirm.textContent = i18n.modalConfirm;
@@ -241,15 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openModal() {
-    if (!modal || !modalDatesList || !modalTotal) return;
+    if (!modal || !modalRangeStart || !modalRangeEnd || !modalDays || !modalTotal) return;
     const sortedKeys = Array.from(selectedDates.keys()).sort();
 
-    modalDatesList.innerHTML = '';
-    for (const key of sortedKeys) {
-      const li = document.createElement('li');
-      li.textContent = toDisplayDate(key);
-      modalDatesList.appendChild(li);
-    }
+    modalRangeStart.textContent = toDisplayDate(sortedKeys[0]);
+    modalRangeEnd.textContent = toDisplayDate(sortedKeys[sortedKeys.length - 1]);
+    modalDays.textContent = i18n.modalDaysLabel.replace('%n', String(sortedKeys.length));
 
     let total = 0;
     let partialPrices = false;
