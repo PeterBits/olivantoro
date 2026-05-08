@@ -19,7 +19,7 @@ interface CalI18n {
   modalConfirm: string;
 }
 
-const WA_MSG_PREFIX = 'Hola, me gustaría reservar la autocaravana para los siguientes días: ';
+const WA_MSG_PREFIX = 'Hola, me gustaría reservar la autocaravana del ';
 
 const selectedDates = new Map<string, number | undefined>();
 let selectionState: SelectionState = 'idle';
@@ -272,8 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleConfirm() {
     modal?.close();
     const sortedKeys = Array.from(selectedDates.keys()).sort();
-    const datesText = sortedKeys.map(toDisplayDate).join(', ');
-    const msg = `${WA_MSG_PREFIX}${datesText}.`;
+    const first = toDisplayDate(sortedKeys[0]);
+    const last = toDisplayDate(sortedKeys[sortedKeys.length - 1]);
+    const msg = `${WA_MSG_PREFIX}${first} al ${last}.`;
     window.open(`${whatsappBase}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
   }
 
