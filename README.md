@@ -2,12 +2,12 @@
 
 Autocaravana rental website for **Olivantoro**, based in Toro, Zamora (Spain). Editorial style: serif display type, tight typographic hierarchy, calm surface palette.
 
-Built with Astro 6 and deployed on Netlify.
+Built with Astro 6 and deployed on Vercel.
 
 ## Tech Stack
 
 - Astro 6 with server-side rendering (`output: 'server'`)
-- `@astrojs/netlify` adapter
+- No adapter needed (static output)
 - Vanilla CSS with custom properties (no Tailwind)
 - Google Fonts (serif display + sans body)
 - Google Calendar integration via public API key
@@ -97,4 +97,4 @@ Without the Google variables, the booking calendar renders an error state. The r
 
 ## Deployment
 
-Configured for Netlify via `@astrojs/netlify`. Push the repository, connect it to Netlify and set the environment variables above in the project settings. Requires Node 22.12+ (declared in `package.json` `engines`).
+Deployed on Vercel. Push the repository, connect it to Vercel and set the environment variables above in the project settings. Requires Node 22.12+ (declared in `package.json` `engines`).

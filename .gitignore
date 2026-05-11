@@ -5,8 +5,8 @@ dist
 .env.local
 .DS_Store
 
-# Local Netlify folder
-.netlify
+# Local Vercel folder
+.vercel
 
 # Testing
 coverage/
