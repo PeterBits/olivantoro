@@ -11,11 +11,12 @@ const monthsJson = JSON.stringify([
 ]);
 
 const i18nJson = JSON.stringify({
-  selectionCountSingular: '1 día seleccionado',
-  selectionCountPlural: '%n días seleccionados',
+  selectionRangeStart: 'Desde el %start — elige el último día',
+  selectionRangeComplete: 'Del %start al %end · %n días',
   selectionClear: 'Limpiar selección',
+  selectionErrorBlocked: 'Hay días no disponibles en ese rango',
   modalTitle: 'Confirma tu reserva',
-  modalDatesLabel: 'Días seleccionados',
+  modalDaysLabel: '%n días',
   modalTotalLabel: 'Total estimado',
   modalCancel: 'Cancelar',
   modalConfirm: 'Confirmar',
@@ -24,7 +25,7 @@ const i18nJson = JSON.stringify({
 const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 ---
 
-<section class="cal section">
+<section class="cal section" id="disponibilidad">
   <div class="cal__inner">
     <header class="cal__head">
       <h2 class="display-sm">Disponibilidad</h2>
@@ -54,18 +55,21 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
       <div class="cal__nav">
         <span id="cal-label" class="title-lg"></span>
         <div class="cal__nav-btns">
+          <button id="cal-today" class="cal__today-btn" type="button" hidden>Hoy</button>
           <button id="cal-prev" class="cal__nav-btn" type="button" aria-label="Previous month">&lsaquo;</button>
           <button id="cal-next" class="cal__nav-btn" type="button" aria-label="Next month">&rsaquo;</button>
         </div>
       </div>
 
-      <div id="cal-grid" class="cal__grid">
-        {weekdays.map((d) => (
-          <div class="cal__weekday label-sm">{d}</div>
-        ))}
+      <div class="cal__grid-area">
+        <div id="cal-grid" class="cal__grid">
+          {weekdays.map((d) => (
+            <div class="cal__weekday label-sm">{d}</div>
+          ))}
+        </div>
+        <p id="cal-loading" class="cal__status">Cargando disponibilidad…</p>
       </div>
 
-      <p id="cal-loading" class="cal__status">Cargando disponibilidad…</p>
       <div id="cal-error" class="cal__error" hidden>
         <p>No se pudo cargar la disponibilidad.</p>
         <p class="label-sm">Escríbenos por WhatsApp y te confirmamos al instante.</p>
@@ -73,8 +77,11 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     </div>
 
     <div id="cal-selection-bar" class="cal__selection-bar" hidden>
-      <span id="cal-selection-count" class="cal__selection-count"></span>
+      <span id="cal-selection-text" class="cal__selection-text"></span>
       <button id="cal-selection-clear" class="btn btn--secondary cal__selection-clear-btn" type="button"></button>
+    </div>
+    <div id="cal-range-error" class="cal__range-error" hidden>
+      <p id="cal-range-error-text" class="cal__range-error-text"></p>
     </div>
 
     <div class="cal__cta">
@@ -89,9 +96,15 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   <div class="cal__modal-content">
     <h3 id="cal-modal-title" class="cal__modal-title"></h3>
     <div class="cal__modal-body">
-      <p id="cal-modal-dates-label" class="cal__modal-dates-label"></p>
-      <ul id="cal-modal-dates-list" class="cal__modal-dates-list"></ul>
-      <p id="cal-modal-total" class="cal__modal-total" hidden></p>
+      <div class="cal__modal-summary">
+        <div class="cal__modal-range">
+          <span id="cal-modal-range-start" class="cal__modal-range-date"></span>
+          <span class="cal__modal-range-sep">→</span>
+          <span id="cal-modal-range-end" class="cal__modal-range-date"></span>
+        </div>
+        <p id="cal-modal-days" class="cal__modal-days"></p>
+        <p id="cal-modal-total" class="cal__modal-total" hidden></p>
+      </div>
     </div>
     <div class="cal__modal-actions">
       <button id="cal-modal-cancel" class="btn btn--secondary" type="button"></button>

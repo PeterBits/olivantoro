@@ -1,16 +1,15 @@
-# Rodando Libre — Editorial Web
+# Olivantoro — Editorial Web
 
-Campervan rental website for **Rodando Libre** (Rolling Free in English), based in Toro, Zamora (Spain). The editorial / professional variant: serif display type, tight typographic hierarchy, a calm surface palette and a dedicated on-home gallery section.
+Autocaravana rental website for **Olivantoro**, based in Toro, Zamora (Spain). Editorial style: serif display type, tight typographic hierarchy, calm surface palette.
 
-Built with Astro 6 and deployed on Netlify.
+Built with Astro 6 and deployed on Vercel.
 
 ## Tech Stack
 
 - Astro 6 with server-side rendering (`output: 'server'`)
-- `@astrojs/netlify` adapter
+- No adapter needed (static output)
 - Vanilla CSS with custom properties (no Tailwind)
 - Google Fonts (serif display + sans body)
-- i18n: Spanish (default) and English — EN version uses the localized brand "Rolling Free"
 - Google Calendar integration via public API key
 - TypeScript with `astro check` available
 
@@ -18,39 +17,38 @@ Built with Astro 6 and deployed on Netlify.
 
 ```text
 public/
-  assets/                  # Real van photos served as static files
+  assets/                  # Van photos served as static files
 src/
-  i18n/
-    es.json                # Spanish translations ("Rodando Libre")
-    en.json                # English translations ("Rolling Free")
-    utils.ts               # Lang, useTranslations and route-path helpers
   env.d.ts                 # Astro / ImportMetaEnv type declarations
   layouts/
     BaseLayout.astro       # Base HTML layout, header/footer slots
   components/
-    Header.astro           # Top nav + language switcher
+    Header.astro           # Top nav
     Footer.astro           # Brand, WhatsApp and Instagram links
     Hero.astro             # Full-bleed hero with van photo and CTA
     VanInfo.astro          # Specs + equipment + interior photo
-    Gallery.astro          # 4-photo gallery (between VanInfo and Pricing)
-    Pricing.astro          # Seasonal price cards (data from van-data.json)
-    BookingCalendar.astro  # Interactive calendar fetching /api/availability
-    ContactBlock.astro     # 3-step booking explainer + WhatsApp/Instagram CTAs
+    Gallery.astro          # Photo gallery
+    HowItWorks.astro       # 4-step booking process explainer
+    BookingCalendar.astro  # Interactive availability calendar + WhatsApp CTA
   data/
-    van-data.json          # Shared specs, equipment and pricing data
+    van-data.json          # Specs and equipment data
   styles/
     global.css             # Tokens, reset, typography, utilities
   pages/
-    index.astro            # Redirects to /es/
-    es/
-      index.astro          # Spanish home
-      reservas.astro       # Spanish bookings
-    en/
-      index.astro          # English home
-      bookings.astro       # English bookings
+    index.astro            # Single home page (full conversion funnel)
     api/
       availability.ts      # Returns availability from Google Calendar
 ```
+
+## Page Structure
+
+The home page is a single conversion funnel:
+
+1. **Hero** — hook + "Consultar disponibilidad" CTA (scrolls to calendar)
+2. **VanInfo** — technical specs and equipment
+3. **Gallery** — photo gallery
+4. **HowItWorks** — 4-step booking process
+5. **BookingCalendar** — availability calendar + reserve via WhatsApp
 
 ## Design System
 
@@ -66,18 +64,14 @@ Editorial / professional theme:
 | `--tertiary`              | Eyebrow / labels   |
 | `--outline`               | Borders            |
 
-Typography pairs a serif family for display/italic accents with a sans-serif for body copy. Fluid sizing via `clamp()`. Mobile-first responsive layout with layout breakpoints at 768px and 1024px.
+Typography pairs a serif family for display/italic accents with a sans-serif for body copy. Fluid sizing via `clamp()`. Mobile-first responsive layout with breakpoints at 768px and 1024px.
 
 ## Routes
 
-| Path                | Description              |
-| :------------------ | :----------------------- |
-| `/`                 | Redirects to `/es/`      |
-| `/es/`              | Spanish home             |
-| `/es/reservas`      | Spanish bookings         |
-| `/en/`              | English home             |
-| `/en/bookings`      | English bookings         |
-| `/api/availability` | JSON availability data   |
+| Path                | Description                        |
+| :------------------ | :--------------------------------- |
+| `/`                 | Home (full funnel + calendar)      |
+| `/api/availability` | JSON availability from Google Cal  |
 
 ## Environment Variables
 
@@ -103,4 +97,4 @@ Without the Google variables, the booking calendar renders an error state. The r
 
 ## Deployment
 
-Configured for Netlify via `@astrojs/netlify`. Push the repository, connect it to Netlify and set the environment variables above in the project settings. Requires Node 22.12+ (declared in `package.json` `engines`).
+Deployed on Vercel. Push the repository, connect it to Vercel and set the environment variables above in the project settings. Requires Node 22.12+ (declared in `package.json` `engines`).

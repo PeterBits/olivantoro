@@ -1,0 +1,161 @@
+---
+const steps = [
+  {
+    number: '01',
+    icon: '<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
+    title: 'Elige tus fechas',
+    description: 'Consulta la disponibilidad en el calendario y elige los días que mejor te vengan.',
+  },
+  {
+    number: '02',
+    icon: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    title: 'Confirma la reserva',
+    description: 'Contáctanos por WhatsApp o email para confirmar tu reserva sin complicaciones.',
+  },
+  {
+    number: '03',
+    icon: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>',
+    title: 'Recoge la autocaravana',
+    description: 'Quedamos en Zamora. Te explicamos todo el funcionamiento y sales con todo listo.',
+  },
+  {
+    number: '04',
+    icon: '<path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 21h18"/>',
+    title: 'Viaja a tu ritmo',
+    description: 'Duerme donde quieras, sin horarios. La carretera es tuya.',
+  },
+];
+---
+
+<section class="hiw section">
+  <div class="hiw__inner">
+    <header class="hiw__header">
+      <span class="label-md hiw__label">Cómo funciona</span>
+      <h2 class="display-md">Reservar es muy sencillo.</h2>
+    </header>
+
+    <ol class="hiw__steps">
+      {steps.map((step) => (
+        <li class="hiw__step">
+          <div class="hiw__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={step.icon} />
+          </div>
+          <span class="hiw__number label-sm">{step.number}</span>
+          <h3 class="hiw__title title-md">{step.title}</h3>
+          <p class="hiw__desc body-lg">{step.description}</p>
+        </li>
+      ))}
+    </ol>
+
+  </div>
+</section>
+
+<style>
+  .hiw { background: var(--surface-container-lowest); }
+  .hiw__inner { max-width: 1200px; margin: 0 auto; }
+
+  .hiw__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 40rem;
+    margin-bottom: 2rem;
+  }
+  .hiw__label { color: var(--tertiary); }
+
+  /* ── Mobile: compact list, no cards ── */
+  .hiw__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .hiw__step {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 1rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .hiw__step:last-child { border-bottom: none; }
+
+  .hiw__icon { display: none; }
+
+  .hiw__number {
+    grid-row: 1 / 3;
+    align-self: center;
+    color: var(--tertiary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .hiw__title {
+    color: var(--on-surface);
+    margin: 0;
+  }
+
+  .hiw__desc {
+    color: var(--on-surface-variant);
+    margin: 0.25rem 0 0;
+  }
+
+  .hiw__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  /* ── Desktop: card grid ── */
+  @media (min-width: 1024px) {
+    .hiw__header { margin-bottom: 3rem; }
+
+    .hiw__steps {
+      flex-direction: unset;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .hiw__step {
+      background: var(--surface-container);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      border-bottom: none;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .hiw__step:hover {
+      transform: translateY(-4px);
+      background: var(--surface-container-high);
+    }
+
+    .hiw__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-container-highest);
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .hiw__number {
+      color: var(--on-surface-variant);
+      font-size: unset;
+      font-weight: unset;
+      align-self: unset;
+    }
+
+    .hiw__desc { margin: 0; }
+  }
+</style>
