@@ -69,8 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let rangeErrorTimer: ReturnType<typeof setTimeout> | null = null;
 
+  const todayBtn = document.getElementById('cal-today');
+
   prev.addEventListener('click', () => shift(-1));
   next.addEventListener('click', () => shift(1));
+  todayBtn?.addEventListener('click', () => { year = now.getFullYear(); month = now.getMonth(); render(); });
   selectionClear?.addEventListener('click', clearSelection);
   whatsappBtn?.addEventListener('click', handleWhatsappClick);
   modalCancel?.addEventListener('click', () => modal?.close());
@@ -265,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function render() {
     label!.textContent = `${MONTHS[month]} ${year}`;
+    if (todayBtn) todayBtn.hidden = year === now.getFullYear() && month === now.getMonth();
     resetGrid();
     for (let i = 0; i < 35; i++) {
       const cell = document.createElement('div');
@@ -351,6 +355,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else if (info?.status === 'reserved') {
         cell.classList.add('cal__cell--reserved');
+        cell.addEventListener('click', () => {
+          cell.classList.remove('cal__cell--shake');
+          void cell.offsetWidth;
+          cell.classList.add('cal__cell--shake');
+        });
       } else if (info?.status === 'available') {
         cell.classList.add('cal__cell--available');
         cell.addEventListener('click', () => handleDayClick(key, info?.price));
@@ -376,9 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isToday) {
-        const dot = document.createElement('span');
-        dot.className = 'cal__today-dot';
-        cell.appendChild(dot);
+        const ring = document.createElement('span');
+        ring.className = 'cal__today-ring';
+        cell.appendChild(ring);
       }
       grid!.appendChild(cell);
     }

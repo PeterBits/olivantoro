@@ -79,7 +79,26 @@
   align-items: center;
   margin-bottom: 1.5rem;
 }
+.cal__nav-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
 .cal__nav-label { text-align: center; }
+.cal__nav-today {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  transition: background var(--transition);
+}
+.cal__nav-today:hover { background: color-mix(in srgb, var(--primary) 12%, transparent); }
+.cal__nav-today[hidden] { display: none; }
 .cal__nav-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -196,13 +215,10 @@
 /* Text must sit above pseudo-elements */
 .cal__cell--sel-start .cal__num,
 .cal__cell--sel-start .cal__price,
-.cal__cell--sel-start .cal__today-dot,
 .cal__cell--sel-end .cal__num,
 .cal__cell--sel-end .cal__price,
-.cal__cell--sel-end .cal__today-dot,
 .cal__cell--sel-mid .cal__num,
-.cal__cell--sel-mid .cal__price,
-.cal__cell--sel-mid .cal__today-dot {
+.cal__cell--sel-mid .cal__price {
   position: relative;
   z-index: 2;
 }
@@ -213,20 +229,11 @@
   color: inherit;
 }
 
-.cal__cell--sel-start .cal__today-dot,
-.cal__cell--sel-end .cal__today-dot {
-  background: var(--on-primary);
-}
-.cal__cell--sel-mid .cal__today-dot {
-  background: var(--on-primary-container);
-}
 .cal__cell--reserved {
   color: var(--outline-variant);
-  cursor: not-allowed;
 }
 .cal__cell--unavailable {
   color: var(--outline-variant);
-  cursor: not-allowed;
 }
 .cal__num {
   line-height: 1;
@@ -241,14 +248,14 @@
 }
 .cal__cell:has(.cal__price) .cal__num { font-size: 0.75rem; }
 .cal__cell:has(.cal__price) .cal__price { font-size: 0.58rem; margin-top: 0.1rem; }
-.cal__today-dot {
+.cal__today-ring {
   position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px; height: 4px;
-  border-radius: 999px;
-  background: var(--tertiary);
+  inset: 1px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .cal__grid-area { position: relative; overflow: hidden; }
@@ -279,7 +286,6 @@
   background: var(--primary);
 }
 .cal__cell--range-start .cal__price { color: inherit; }
-.cal__cell--range-start .cal__today-dot { background: var(--on-primary); }
 
 /* Selection bar */
 .cal__selection-bar[hidden] { display: none; }

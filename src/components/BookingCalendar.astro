@@ -46,7 +46,10 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     >
       <div class="cal__nav">
         <button id="cal-prev" class="cal__nav-btn" type="button" aria-label="Mes anterior">&lsaquo;</button>
-        <span id="cal-label" class="title-lg cal__nav-label"></span>
+        <div class="cal__nav-center">
+          <span id="cal-label" class="title-lg cal__nav-label"></span>
+          <button id="cal-today" class="cal__nav-today" type="button" hidden>Hoy</button>
+        </div>
         <button id="cal-next" class="cal__nav-btn" type="button" aria-label="Mes siguiente">&rsaquo;</button>
       </div>
 
