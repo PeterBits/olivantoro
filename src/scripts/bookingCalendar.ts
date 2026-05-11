@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const next = document.getElementById('cal-next');
   if (!grid || !label || !loading || !errorEl || !prev || !next) return;
 
-  const todayBtn = document.getElementById('cal-today') as HTMLButtonElement | null;
   const selectionBar = document.getElementById('cal-selection-bar');
   const selectionText = document.getElementById('cal-selection-text');
   const selectionClear = document.getElementById('cal-selection-clear');
@@ -70,13 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let rangeErrorTimer: ReturnType<typeof setTimeout> | null = null;
 
+  const todayBtn = document.getElementById('cal-today');
+
   prev.addEventListener('click', () => shift(-1));
   next.addEventListener('click', () => shift(1));
-  todayBtn?.addEventListener('click', () => {
-    year = now.getFullYear();
-    month = now.getMonth();
-    render();
-  });
+  todayBtn?.addEventListener('click', () => { year = now.getFullYear(); month = now.getMonth(); render(); });
   selectionClear?.addEventListener('click', clearSelection);
   whatsappBtn?.addEventListener('click', handleWhatsappClick);
   modalCancel?.addEventListener('click', () => modal?.close());
@@ -271,8 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function render() {
     label!.textContent = `${MONTHS[month]} ${year}`;
-    const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
-    if (todayBtn) todayBtn.hidden = isCurrentMonth;
+    if (todayBtn) todayBtn.hidden = year === now.getFullYear() && month === now.getMonth();
     resetGrid();
     for (let i = 0; i < 35; i++) {
       const cell = document.createElement('div');
@@ -317,6 +313,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
+    const sortedSelKeys = selectionState === 'selected' && selectedDates.size > 0
+      ? Array.from(selectedDates.keys()).sort()
+      : [];
+    const selFirst = sortedSelKeys[0] ?? null;
+    const selLast = sortedSelKeys[sortedSelKeys.length - 1] ?? null;
+
     for (let i = 0; i < startDow; i++) {
       const cell = document.createElement('div');
       cell.className = 'cal__cell cal__cell--empty';
@@ -346,10 +348,18 @@ document.addEventListener('DOMContentLoaded', () => {
         cell.classList.add('cal__cell--range-start');
         cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else if (isSelected) {
-        cell.classList.add('cal__cell--selected');
+        const cls = key === selFirst ? 'cal__cell--sel-start'
+          : key === selLast ? 'cal__cell--sel-end'
+          : 'cal__cell--sel-mid';
+        cell.classList.add(cls);
         cell.addEventListener('click', () => handleDayClick(key, info?.price));
       } else if (info?.status === 'reserved') {
         cell.classList.add('cal__cell--reserved');
+        cell.addEventListener('click', () => {
+          cell.classList.remove('cal__cell--shake');
+          void cell.offsetWidth;
+          cell.classList.add('cal__cell--shake');
+        });
       } else if (info?.status === 'available') {
         cell.classList.add('cal__cell--available');
         cell.addEventListener('click', () => handleDayClick(key, info?.price));
@@ -375,9 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isToday) {
-        const dot = document.createElement('span');
-        dot.className = 'cal__today-dot';
-        cell.appendChild(dot);
+        const ring = document.createElement('span');
+        ring.className = 'cal__today-ring';
+        cell.appendChild(ring);
       }
       grid!.appendChild(cell);
     }

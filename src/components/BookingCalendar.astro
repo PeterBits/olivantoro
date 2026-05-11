@@ -31,14 +31,6 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
       <h2 class="display-sm">Disponibilidad</h2>
       <ul class="cal__legend">
         <li class="cal__legend-item">
-          <span class="cal__swatch cal__swatch--available"><span class="cal__swatch-num">18</span></span>
-          Disponible
-        </li>
-        <li class="cal__legend-item">
-          <span class="cal__swatch cal__swatch--reserved"><span class="cal__swatch-num">18</span></span>
-          Reservado
-        </li>
-        <li class="cal__legend-item">
           <span class="cal__swatch cal__swatch--unavailable"><span class="cal__swatch-num">18</span></span>
           No disponible
         </li>
@@ -53,12 +45,12 @@ const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
       data-i18n={i18nJson}
     >
       <div class="cal__nav">
-        <span id="cal-label" class="title-lg"></span>
-        <div class="cal__nav-btns">
-          <button id="cal-today" class="cal__today-btn" type="button" hidden>Hoy</button>
-          <button id="cal-prev" class="cal__nav-btn" type="button" aria-label="Previous month">&lsaquo;</button>
-          <button id="cal-next" class="cal__nav-btn" type="button" aria-label="Next month">&rsaquo;</button>
+        <button id="cal-prev" class="cal__nav-btn" type="button" aria-label="Mes anterior">&lsaquo;</button>
+        <div class="cal__nav-center">
+          <span id="cal-label" class="title-lg cal__nav-label"></span>
+          <button id="cal-today" class="cal__nav-today" type="button" hidden>Hoy</button>
         </div>
+        <button id="cal-next" class="cal__nav-btn" type="button" aria-label="Mes siguiente">&rsaquo;</button>
       </div>
 
       <div class="cal__grid-area">
