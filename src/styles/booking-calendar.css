@@ -74,26 +74,12 @@
 }
 
 .cal__nav {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
-.cal__nav-btns { display: flex; align-items: center; gap: 0.5rem; }
-.cal__today-btn {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: 999px;
-  padding: 0.25rem 0.75rem;
-  transition: background var(--transition), color var(--transition);
-}
-.cal__today-btn:hover {
-  background: var(--primary);
-  color: var(--on-primary);
-}
+.cal__nav-label { text-align: center; }
 .cal__nav-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -107,7 +93,9 @@
 .cal__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.25rem;
+  --col-gap: 0.25rem;
+  column-gap: var(--col-gap);
+  row-gap: 0.25rem;
 }
 .cal__weekday {
   text-align: center;
@@ -147,21 +135,89 @@
 }
 .cal__cell--available {
   cursor: pointer;
-  background: var(--surface-container-high);
-  border: 1px solid var(--outline-variant);
 }
-.cal__cell--available:hover { background: var(--surface-container-highest); }
-.cal__cell--selected {
+.cal__cell--available:hover { background: var(--surface-container-highest); border-radius: 50%; }
+.cal__cell--sel-start,
+.cal__cell--sel-end,
+.cal__cell--sel-mid {
   cursor: pointer;
+}
+
+/* Band: right half for start, left half for end, full width for mid */
+.cal__cell--sel-start::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  right: calc(-1 * var(--col-gap) / 2);
+  background: var(--primary-container);
+  z-index: 0;
+}
+.cal__cell--sel-end::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: calc(-1 * var(--col-gap) / 2);
+  right: 50%;
+  background: var(--primary-container);
+  z-index: 0;
+}
+.cal__cell--sel-mid::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: calc(-1 * var(--col-gap) / 2);
+  right: calc(-1 * var(--col-gap) / 2);
+  background: var(--primary-container);
+  z-index: 0;
+}
+
+/* Circle for start and end */
+.cal__cell--sel-start::after,
+.cal__cell--sel-end::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   background: var(--primary);
+  z-index: 1;
+}
+
+/* Text colors */
+.cal__cell--sel-start,
+.cal__cell--sel-end {
   color: var(--on-primary);
 }
-.cal__cell--selected .cal__price {
+.cal__cell--sel-mid {
+  color: var(--on-primary-container);
+}
+
+/* Text must sit above pseudo-elements */
+.cal__cell--sel-start .cal__num,
+.cal__cell--sel-start .cal__price,
+.cal__cell--sel-start .cal__today-dot,
+.cal__cell--sel-end .cal__num,
+.cal__cell--sel-end .cal__price,
+.cal__cell--sel-end .cal__today-dot,
+.cal__cell--sel-mid .cal__num,
+.cal__cell--sel-mid .cal__price,
+.cal__cell--sel-mid .cal__today-dot {
+  position: relative;
+  z-index: 2;
+}
+
+.cal__cell--sel-start .cal__price,
+.cal__cell--sel-end .cal__price,
+.cal__cell--sel-mid .cal__price {
   color: inherit;
 }
-.cal__cell--selected:hover {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+
+.cal__cell--sel-start .cal__today-dot,
+.cal__cell--sel-end .cal__today-dot {
+  background: var(--on-primary);
+}
+.cal__cell--sel-mid .cal__today-dot {
+  background: var(--on-primary-container);
 }
 .cal__cell--reserved {
   background: var(--tertiary);
@@ -195,7 +251,7 @@
   background: var(--tertiary);
 }
 
-.cal__grid-area { position: relative; }
+.cal__grid-area { position: relative; overflow: hidden; }
 
 .cal__status {
   position: absolute;
@@ -215,15 +271,15 @@
 /* Range-start cell (first click done, awaiting second) */
 .cal__cell--range-start {
   cursor: pointer;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  border: 2px dashed var(--primary);
-}
-.cal__cell--range-start:hover {
+  border-radius: 50%;
   background: var(--primary);
   color: var(--on-primary);
 }
+.cal__cell--range-start:hover {
+  background: var(--primary);
+}
 .cal__cell--range-start .cal__price { color: inherit; }
+.cal__cell--range-start .cal__today-dot { background: var(--on-primary); }
 
 /* Selection bar */
 .cal__selection-bar[hidden] { display: none; }
@@ -357,7 +413,7 @@
 
 @media (min-width: 768px) {
   .cal__head { flex-direction: row; justify-content: space-between; align-items: center; }
-  .cal__grid { gap: 0.5rem; }
+  .cal__grid { --col-gap: 0.5rem; column-gap: var(--col-gap); row-gap: 0.5rem; }
   .cal__num { font-size: 1.3rem; }
   .cal__cell:has(.cal__price) .cal__num { font-size: 1.1rem; }
   .cal__cell:has(.cal__price) .cal__price { font-size: 0.75rem; }
