@@ -44,8 +44,8 @@
   color: var(--on-surface);
 }
 .cal__swatch--reserved {
-  background: var(--tertiary);
-  color: var(--on-tertiary);
+  background: transparent;
+  color: var(--outline-variant);
 }
 .cal__swatch--unavailable {
   background: transparent;
@@ -119,7 +119,8 @@
 .cal__cell--muted { color: var(--outline-variant); }
 .cal__cell--past  { color: var(--outline-variant); }
 .cal__cell--past::after,
-.cal__cell--unavailable::after {
+.cal__cell--unavailable::after,
+.cal__cell--reserved::after {
   content: '';
   position: absolute;
   inset: 15%;
@@ -220,8 +221,7 @@
   background: var(--on-primary-container);
 }
 .cal__cell--reserved {
-  background: var(--tertiary);
-  color: var(--on-tertiary);
+  color: var(--outline-variant);
   cursor: not-allowed;
 }
 .cal__cell--unavailable {
