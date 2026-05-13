@@ -1,6 +1,6 @@
 # Olivantoro — Editorial Web
 
-Autocaravana rental website for **Olivantoro**, based in Toro, Zamora (Spain). Editorial style: serif display type, tight typographic hierarchy, calm surface palette.
+Autocaravana rental website for **Olivantoro**, based in Toro, Toro (Spain). Editorial style: serif display type, tight typographic hierarchy, calm surface palette.
 
 Built with Astro 6 and deployed on Vercel.
 
