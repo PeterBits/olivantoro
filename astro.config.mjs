@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  site: 'https://olivantoro.es',
+  site: 'https://olivantoro.com',
   output: 'static',
   adapter: vercel(),
   integrations: [sitemap()],
