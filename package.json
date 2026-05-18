@@ -20,6 +20,7 @@
     "@astrojs/vercel": "^10.0.6",
     "@fontsource/noto-serif": "^5.2.9",
     "@fontsource/plus-jakarta-sans": "^5.2.8",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^6.1.7"
   },
   "devDependencies": {

@@ -1,24 +1,26 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import Hero from '../components/Hero.astro';
-import VanInfo from '../components/VanInfo.astro';
-import Gallery from '../components/Gallery.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-import BookingCalendar from '../components/BookingCalendar.astro';
+import Analytics from "@vercel/analytics/astro";
+import BookingCalendar from "../components/BookingCalendar.astro";
+import Footer from "../components/Footer.astro";
+import Gallery from "../components/Gallery.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import VanInfo from "../components/VanInfo.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const SITE = Astro.url.origin;
 
 const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'Olivantoro',
-  description: 'Alquila nuestra autocaravana en Toro. Ford Rimor Kilig totalmente equipada: cama doble, capuchina y cocina. Reserva online.',
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "Olivantoro",
+  description:
+    "Alquila nuestra autocaravana en Toro. Ford Rimor Kilig totalmente equipada: cama doble, capuchina y cocina. Reserva online.",
   url: SITE,
   image: `${SITE}/og-image.jpg`,
-  priceRange: '€€',
-  sameAs: ['https://instagram.com/olivantoro'],
+  priceRange: "€€",
+  sameAs: ["https://instagram.com/olivantoro"],
 };
 ---
 
@@ -35,4 +37,5 @@ const schema = {
   <HowItWorks />
   <BookingCalendar />
   <Footer slot="footer" />
+  <Analytics />
 </BaseLayout>
